@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOL — Design Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #fafafa;
+            --gray-light: #e5e5e5;
+            --gray-mid: #666666;
+            --spacing: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            opacity: 0;
+            cursor: default;
+            position: relative;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at 30% 50%, 
+                rgba(250, 250, 250, 0.8) 0%, 
+                transparent 50%
+            ),
+            radial-gradient(
+                circle at 70% 50%, 
+                rgba(229, 229, 229, 0.5) 0%, 
+                transparent 50%
+            );
+            animation: gradientMove 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(5%, 5%) rotate(120deg);
+            }
+            66% {
+                transform: translate(-5%, 5%) rotate(240deg);
+            }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--gray-light) 1px, transparent 1px),
+                linear-gradient(90deg, var(--gray-light) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 calc(var(--spacing) * 6);
+        }
+
+        header {
+            padding: calc(var(--spacing) * 5) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray-light);
+            position: sticky;
+            top: 0;
+            background: transparent;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        @keyframes blobMove {
+            0%, 100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+                transform: translate(10px, -10px) scale(1.05);
+            }
+            50% {
+                border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+                transform: translate(-10px, 10px) scale(0.95);
+            }
+            75% {
+                border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%;
+                transform: translate(10px, 10px) scale(1.02);
+            }
+        }
+
+        .work-image::before {
+            animation: blobMove 20s ease-in-out infinite;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 5px rgba(10, 10, 10, 0.5),
+                    0 0 10px rgba(10, 10, 10, 0.3),
+                    0 0 20px rgba(10, 10, 10, 0.2);
+            }
+            50% {
+                text-shadow: 
+                    0 0 10px rgba(10, 10, 10, 0.8),
+                    0 0 20px rgba(10, 10, 10, 0.5),
+                    0 0 30px rgba(10, 10, 10, 0.3),
+                    0 0 40px rgba(10, 10, 10, 0.1);
+            }
+        }
+
+        .section-title {
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+
+        .work-title.glitch {
+            position: relative;
+        }
+
+        .work-title.glitch::before,
+        .work-title.glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .work-item:hover .work-title.glitch::before {
+            animation: glitch-1 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: var(--black);
+            z-index: -1;
+        }
+
+        .work-item:hover .work-title.glitch::after {
+            animation: glitch-2 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+            color: var(--gray-mid);
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+            33% {
+                transform: translate(-2px, 2px);
+                opacity: 0.3;
+            }
+            66% {
+                transform: translate(2px, -1px);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+            33% {
+                transform: translate(2px, -2px);
+                opacity: 0.2;
+            }
+            66% {
+                transform: translate(-2px, 1px);
+                opacity: 0.2;
+            }
+        }
+
+        nav {
+            display: flex;
+            gap: calc(var(--spacing) * 5);
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--gray-mid);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--black);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::before {
+            width: 100%;
+        }
+
+        .hero {
+            padding: calc(var(--spacing) * 20) 0 calc(var(--spacing) * 15);
+            max-width: 900px;
+        }
+
+        .hero-eyebrow {
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gray-mid);
+            margin-bottom: calc(var(--spacing) * 3);
+            font-weight: 500;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(48px, 6vw, 96px);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: calc(var(--spacing) * 4);
+            letter-spacing: -0.03em;
+            color: var(--black);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--black);
+            animation: underlineExpand 1.5s ease 1.2s forwards;
+        }
+
+        @keyframes underlineExpand {
+            to { width: 120px; }
+        }
+
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--gray-mid);
+            max-width: 620px;
+            margin-bottom: calc(var(--spacing) * 6);
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(var(--spacing) * 1);
+            padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+            background: var(--black);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 1px solid var(--black);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .hero-cta:hover::before {
+            left: 100%;
+        }
+
+        .hero-cta:hover {
+            background: var(--white);
+            color: var(--black);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px) scale(1.05);
+            border-color: var(--black);
+        }
+
+        .hero-cta::after {
+            content: '→';
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .hero-cta:hover::after {
+            transform: translateX(4px);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--gray-light);
+            margin: calc(var(--spacing) * 12) 0;
+        }
+
+        .grid-section {
+            padding: calc(var(--spacing) * 12) 0;
+        }
+
+        .section-header {
+            margin-bottom: calc(var(--spacing) * 8);
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(32px, 4vw, 56px);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: calc(var(--spacing) * 6);
+        }
+
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: calc(var(--spacing) * 10);
+        }
+
+        .work-item {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .work-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: var(--gray-light);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-light);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .work-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(45deg, transparent 48%, var(--gray-light) 49%, var(--gray-light) 51%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, var(--gray-light) 49%, var(--gray-light) 51%, transparent 52%);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .work-item:hover .work-image {
+            border-color: var(--black);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .work-item:hover .work-number {
+            transform: scale(1.2) rotate(360deg);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .work-number {
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .work-number {
+            position: absolute;
+            top: calc(var(--spacing) * 3);
+            right: calc(var(--spacing) * 3);
+            font-size: 12px;
+            color: var(--gray-mid);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            transition: transform 0.3s ease;
+        }
+
+        .work-info {
+            padding: calc(var(--spacing) * 3) 0;
+        }
+
+        .work-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: calc(var(--spacing) * 1);
+            letter-spacing: -0.01em;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .work-item:hover .work-title {
+            letter-spacing: 0.05em;
+        }
+
+        .work-filters {
+            display: flex;
+            gap: calc(var(--spacing) * 2);
+            margin-top: calc(var(--spacing) * 4);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
+            background: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--gray-mid);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--black);
+            color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--black);
+            color: var(--white);
+            border-color: var(--black);
+        }
+
+        .work-meta {
+            display: flex;
+            gap: calc(var(--spacing) * 2);
+            margin-top: calc(var(--spacing) * 1);
+        }
+
+        .work-year,
+        .work-category {
+            font-size: 12px;
+            color: var(--gray-mid);
+            letter-spacing: 0.05em;
+        }
+
+        .work-item.hidden {
+            display: none;
+        }
+
+        .department-section {
+            background: var(--black);
+            color: var(--white);
+            margin: 0;
+            padding: calc(var(--spacing) * 15) 0;
+            position: relative;
+            overflow: hidden;
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+        }
+
+        .department-filters {
+            display: flex;
+            gap: calc(var(--spacing) * 2);
+            margin-top: calc(var(--spacing) * 4);
+            flex-wrap: wrap;
+        }
+
+        .dept-filter-btn {
+            padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .dept-filter-btn:hover {
+            border-color: var(--white);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .dept-filter-btn.active {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: calc(var(--spacing) * 8);
+            margin-top: calc(var(--spacing) * 10);
+        }
+
+        .department-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: calc(var(--spacing) * 6);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .department-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+            transition: width 0.5s ease;
+        }
+
+        .department-card:hover::before {
+            width: 100%;
+        }
+
+        .department-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .department-card.hidden {
+            display: none;
+        }
+
+        .dept-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: calc(var(--spacing) * 4);
+            padding-bottom: calc(var(--spacing) * 3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dept-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        .dept-stats {
+            display: flex;
+            gap: calc(var(--spacing) * 3);
+        }
+
+        .dept-count {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.05em;
+        }
+
+        .dept-leaders {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing) * 3);
+            margin-bottom: calc(var(--spacing) * 4);
+        }
+
+        .leader-card {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing) * 3);
+            padding: calc(var(--spacing) * 3);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .leader-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+        }
+
+        .leader-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .leader-info {
+            flex: 1;
+        }
+
+        .leader-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: calc(var(--spacing) * 0.5);
+        }
+
+        .leader-role {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.05em;
+        }
+
+        .dept-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        footer {
+            padding: calc(var(--spacing) * 12) 0 calc(var(--spacing) * 6);
+            border-top: 1px solid var(--gray-light);
+            margin-top: calc(var(--spacing) * 15);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: calc(var(--spacing) * 6);
+        }
+
+        .footer-left {
+            max-width: 500px;
+        }
+
+        .footer-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 36px;
+            margin-bottom: calc(var(--spacing) * 2);
+            font-weight: 400;
+        }
+
+        .footer-text {
+            font-size: 15px;
+            color: var(--gray-mid);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: calc(var(--spacing) * 6);
+        }
+
+        .footer-column a {
+            display: inline-block;
+            color: var(--black);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+            border: 1px solid var(--black);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-column a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .footer-column a:hover::before {
+            left: 0;
+        }
+
+        .footer-column a:hover {
+            color: var(--white);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .footer-bottom {
+            padding-top: calc(var(--spacing) * 4);
+            border-top: 1px solid var(--gray-light);
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray-mid);
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+
+            body::before {
+                background-size: 30px 30px;
+            }
+
+            .container {
+                padding: 0 calc(var(--spacing) * 3);
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: calc(var(--spacing) * 3);
+                padding: calc(var(--spacing) * 3) 0;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: calc(var(--spacing) * 2);
+                width: 100%;
+            }
+
+            nav a {
+                font-size: 16px;
+            }
+
+            .hero {
+                padding: calc(var(--spacing) * 8) 0 calc(var(--spacing) * 8);
+            }
+
+            .hero-eyebrow {
+                font-size: 11px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .hero-cta {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .work-grid {
+                grid-template-columns: 1fr;
+                gap: calc(var(--spacing) * 6);
+            }
+
+            .work-filters,
+            .department-filters {
+                flex-direction: column;
+                gap: calc(var(--spacing) * 2);
+            }
+
+            .filter-btn,
+            .dept-filter-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .department-grid {
+                grid-template-columns: 1fr;
+                gap: calc(var(--spacing) * 6);
+            }
+
+            .department-section {
+                padding: calc(var(--spacing) * 10) 0;
+                margin-left: calc(50% - 50vw);
+            }
+
+            .dept-title {
+                font-size: 24px;
+            }
+
+            .leader-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: calc(var(--spacing) * 6);
+                align-items: flex-start;
+            }
+
+            .footer-title {
+                font-size: 28px;
+            }
+
+            .footer-column a {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                text-align: center;
+            }
+
+            .cursor,
+            .cursor-dot {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 calc(var(--spacing) * 2);
+            }
+
+            h1 {
+                font-size: 28px;
+                line-height: 1.2;
+            }
+
+            .hero-description {
+                font-size: 15px;
+                line-height: 1.7;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .work-title {
+                font-size: 20px;
+            }
+
+            .approach-title {
+                font-size: 20px;
+            }
+
+            .footer-title {
+                font-size: 20px;
+            }
+
+            .footer-text,
+            .footer-column a {
+                font-size: 13px;
+            }
+
+            body::before {
+                background-size: 20px 20px;
+                opacity: 0.3;
+            }
+        }
+
+        .work-item:active,
+        .department-card:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .hero-eyebrow {
+                opacity: 0;
+                animation: fadeInUp 0.8s ease 0.2s forwards;
+            }
+
+            h1 {
+                opacity: 0;
+                animation: fadeInUp 1s ease 0.4s forwards;
+            }
+
+            .hero-description {
+                opacity: 0;
+                animation: fadeInUp 0.8s ease 0.6s forwards;
+            }
+
+            .hero-cta {
+                opacity: 0;
+                animation: fadeInUp 0.8s ease 0.8s forwards;
+            }
+
+            .work-item,
+            .department-card {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            .work-item.reveal {
+                animation: revealItem 0.8s cubic-bezier(0.23, 1, 0.320, 1) forwards;
+            }
+
+            .department-card.reveal {
+                animation: revealItem 0.8s cubic-bezier(0.23, 1, 0.320, 1) forwards;
+            }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes revealItem {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .work-image::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--black);
+                transform-origin: left;
+            }
+
+            .work-item.reveal .work-image::after {
+                animation: imageReveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+            }
+
+            @keyframes imageReveal {
+                0% {
+                    transform: scaleX(1);
+                }
+                50% {
+                    transform-origin: left;
+                    transform: scaleX(1);
+                }
+                51% {
+                    transform-origin: right;
+                }
+                100% {
+                    transform-origin: right;
+                    transform: scaleX(0);
+                }
+            }
+
+            .work-item:hover {
+                transform: translateY(-20px) rotateX(2deg);
+                transition: transform 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+                filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.2));
+            }
+
+            .work-item:hover .work-title {
+                transform: translateX(8px);
+                transition: transform 0.4s ease;
+                letter-spacing: 0.1em;
+            }
+
+            .work-item:hover .work-image {
+                transform: scale(1.08) rotate(1deg);
+                filter: brightness(1.05) contrast(1.1);
+            }
+
+            .work-item {
+                perspective: 1000px;
+                transform-style: preserve-3d;
+            }
+
+            @keyframes glitch {
+                0%, 100% {
+                    transform: translate(0);
+                }
+                20% {
+                    transform: translate(-2px, 2px);
+                }
+                40% {
+                    transform: translate(-2px, -2px);
+                }
+                60% {
+                    transform: translate(2px, 2px);
+                }
+                80% {
+                    transform: translate(2px, -2px);
+                }
+            }
+
+            .department-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, 
+                    transparent, 
+                    rgba(255, 255, 255, 0.5), 
+                    transparent
+                );
+                animation: wave 3s ease-in-out infinite;
+            }
+
+            @keyframes wave {
+                0%, 100% {
+                    transform: translateX(-100%);
+                }
+                50% {
+                    transform: translateX(100%);
+                }
+            }
+
+            .hero-cta {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero-cta::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: var(--white);
+                transform: translate(-50%, -50%);
+                transition: width 0.6s ease, height 0.6s ease;
+            }
+
+            .hero-cta:hover::before {
+                width: 300px;
+                height: 300px;
+            }
+
+            .hero-cta span {
+                position: relative;
+                z-index: 1;
+            }
+
+            nav a::before {
+                transform-origin: right;
+                transform: scaleX(0);
+            }
+
+            nav a:hover::before {
+                transform-origin: left;
+                transform: scaleX(1);
+            }
+
+            .parallax {
+                transition: transform 0.3s ease-out;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">SOL</div>
+            <nav>
+                <a href="#work">작업</a>
+                <a href="#team">팀</a>
+                <a href="#about">소개</a>
+                <a href="#contact">문의</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-eyebrow">디자인 스튜디오</div>
+            <h1>의미있는<br>경험을 만듭니다</h1>
+            <p class="hero-description">
+                본질에 집중합니다.
+            </p>
+            <a href="#contact" class="hero-cta"><span>프로젝트 시작하기</span></a>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section class="grid-section" id="work">
+            <div class="section-header">
+                <h2 class="section-title">작업</h2>
+                <div class="work-filters">
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button class="filter-btn" data-filter="planning">기획</button>
+                    <button class="filter-btn" data-filter="design">디자인</button>
+                    <button class="filter-btn" data-filter="development">개발</button>
+                </div>
+            </div>
+
+            <div class="work-grid">
+                <div class="work-item" data-category="design" data-year="2026">
+                    <div class="work-image">
+                        <span class="work-number">01</span>
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title glitch" data-text="Identity">Identity</h3>
+                        <div class="work-meta">
+                            <span class="work-year">2026</span>
+                            <span class="work-category">디자인</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item" data-category="development" data-year="2026">
+                    <div class="work-image">
+                        <span class="work-number">02</span>
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title glitch" data-text="Platform">Platform</h3>
+                        <div class="work-meta">
+                            <span class="work-year">2026</span>
+                            <span class="work-category">개발</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item" data-category="design" data-year="2024">
+                    <div class="work-image">
+                        <span class="work-number">03</span>
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title glitch" data-text="Editorial">Editorial</h3>
+                        <div class="work-meta">
+                            <span class="work-year">2026</span>
+                            <span class="work-category">디자인</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item" data-category="planning" data-year="2024">
+                    <div class="work-image">
+                        <span class="work-number">04</span>
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title glitch" data-text="Motion">Motion</h3>
+                        <div class="work-meta">
+                            <span class="work-year">2026</span>
+                            <span class="work-category">기획</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="department-section" id="team">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">부서 소개</h2>
+                <div class="department-filters">
+                    <button class="dept-filter-btn active" data-dept="all">전체</button>
+                    <button class="dept-filter-btn" data-dept="planning">기획</button>
+                    <button class="dept-filter-btn" data-dept="design">디자인</button>
+                    <button class="dept-filter-btn" data-dept="development">개발</button>
+                </div>
+            </div>
+
+            <div class="department-grid">
+                <div class="department-card" data-dept="all">
+                    <div class="dept-header">
+                        <h3 class="dept-title">전체</h3>
+                        <div class="dept-stats">
+                            <span class="dept-count">총 8명</span>
+                        </div>
+                    </div>
+                    <div class="dept-leaders">
+                        <div class="leader-card">
+                            <div class="leader-avatar"></div>
+                            <div class="leader-info">
+                                <div class="leader-name">부장</div>
+                                <div class="leader-role">총괄</div>
+                            </div>
+                        </div>
+                        <div class="leader-card">
+                            <div class="leader-avatar"></div>
+                            <div class="leader-info">
+                                <div class="leader-name">부부장</div>
+                                <div class="leader-role">운영</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="department-card" data-dept="planning">
+                    <div class="dept-header">
+                        <h3 class="dept-title">기획</h3>
+                        <div class="dept-stats">
+                            <span class="dept-count">3명</span>
+                        </div>
+                    </div>
+                    <div class="dept-leaders">
+                        <div class="leader-card">
+                            <div class="leader-avatar"></div>
+                            <div class="leader-info">
+                                <div class="leader-name">기획 대표</div>
+                                <div class="leader-role">기획팀장</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-description">
+                        프로젝트 기획 및 전략 수립
+                    </div>
+                </div>
+
+                <div class="department-card" data-dept="design">
+                    <div class="dept-header">
+                        <h3 class="dept-title">디자인</h3>
+                        <div class="dept-stats">
+                            <span class="dept-count">3명</span>
+                        </div>
+                    </div>
+                    <div class="dept-leaders">
+                        <div class="leader-card">
+                            <div class="leader-avatar"></div>
+                            <div class="leader-info">
+                                <div class="leader-name">디자인 대표</div>
+                                <div class="leader-role">디자인팀장</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-description">
+                        UI/UX 디자인 및 브랜딩
+                    </div>
+                </div>
+
+                <div class="department-card" data-dept="development">
+                    <div class="dept-header">
+                        <h3 class="dept-title">개발</h3>
+                        <div class="dept-stats">
+                            <span class="dept-count">5명</span>
+                        </div>
+                    </div>
+                    <div class="dept-leaders">
+                        <div class="leader-card">
+                            <div class="leader-avatar"></div>
+                            <div class="leader-info">
+                                <div class="leader-name">개발 대표</div>
+                                <div class="leader-role">개발팀장</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-description">
+                        웹/앱 개발 및 시스템 구축
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <footer id="contact">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <h2 class="footer-title">함께 시작하세요</h2>
+                    <p class="footer-text">
+                        hello@sol.com
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <a href="mailto:hello@sol.com">문의하기</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; 2026 SOL</div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="2.js"></script>
+</body>
+</html>
